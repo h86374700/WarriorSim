@@ -50,6 +50,7 @@ class Simulation {
         let delayedspell, delayedheroic;
         let spellcheck = false;
         let next = 0;
+        let rageGenFromDamage = (player.dtps / 230.6) * 2.5;
 
         // item steps
         let itemdelay = 0;
@@ -84,6 +85,11 @@ class Simulation {
                 player.rage = player.rage >= 80 ? 100 : player.rage + 20;
                 spellcheck = true;
                 //if (log) player.log(`Vael Buff tick`);
+            }
+            if (rageGenFromDamage > 0 && next != 0 && step % 1000 == 0) {
+                player.rage = player.rage + rageGenFromDamage >= 100 ? 100 : player.rage + rageGenFromDamage;
+                spellcheck = true;
+                // if (log) player.log(`dtps tick`);
             }
 
             // Attacks
@@ -214,6 +220,7 @@ class Simulation {
             if (player.itemtimer && player.itemtimer < next) next = player.itemtimer;
             if (player.talents.angermanagement && (3000 - (step % 3000)) < next) next = 3000 - (step % 3000);
             if (player.vaelbuff && (1000 - (step % 1000)) < next) next = 1000 - (step % 1000);
+            if (rageGenFromDamage > 0 && (1000 - (step % 1000)) < next) next = 1000 - (step % 1000);
             if (player.auras.bloodrage && player.auras.bloodrage.timer && (1000 - ((step - player.auras.bloodrage.starttimer) % 1000)) < next)
                 next = 1000 - ((step - player.auras.bloodrage.starttimer) % 1000);
             if (player.auras.gabbar && player.auras.gabbar.timer && (2000 - ((step - player.auras.gabbar.starttimer) % 2000)) < next)

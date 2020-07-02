@@ -12,6 +12,7 @@ class Player {
         this.aqbooks = $('select[name="aqbooks"]').val() == "Yes";
         this.weaponrng = $('select[name="weaponrng"]').val() == "Yes";
         this.spelldamage = parseInt($('input[name="spelldamage"]').val());
+        this.dtps = parseInt($('input[name="dtps"]').val());
         if (enchtype == 1) {
             this.testEnch = testItem;
             this.testEnchType = testType;
