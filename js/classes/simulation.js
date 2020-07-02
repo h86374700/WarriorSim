@@ -3,7 +3,8 @@ var RESULT = {
     MISS: 1,
     DODGE: 2,
     CRIT: 3,
-    GLANCE: 4
+    GLANCE: 4,
+    PARRY: 5
 }
 
 var step = 0;

@@ -318,6 +318,7 @@ class Player {
         this.mh.glanceChance = this.getGlanceChance(this.mh);
         this.armorReduction = this.getArmorReduction();
         this.mh.miss = this.getMissChance(this.mh);
+        this.mh.parry = this.getParryChance(this.mh);
         this.mh.dwmiss = this.mh.miss;
         this.mh.dodge = this.getDodgeChance(this.mh);
 
@@ -325,6 +326,7 @@ class Player {
             this.mh.dwmiss = this.getDWMissChance(this.mh);
             this.oh.glanceChance = this.getGlanceChance(this.oh);
             this.oh.miss = this.getMissChance(this.oh);
+            this.oh.parry = this.getParryChance(this.oh);
             this.oh.dwmiss = this.getDWMissChance(this.oh);
             this.oh.dodge = this.getDodgeChance(this.oh);
         }
@@ -433,6 +435,11 @@ class Player {
     getGlanceChance(weapon) {
         return 10 + (this.target.defense - Math.min(this.level * 5, this.stats['skill_' + weapon.type])) * 2;
     }
+    getParryChance(weapon) {
+        let extraWeaponSkill = Math.max(this.stats['skill_' + weapon.type], this.level * 5) - 300;
+        let parry = 14 - extraWeaponSkill * 0.1;
+        return parry;
+    }
     getMissChance(weapon) {
         let diff = this.target.defense - this.stats['skill_' + weapon.type];
         let miss = 5 + (diff > 10 ? diff * 0.2 : diff * 0.1);
@@ -460,20 +467,20 @@ class Player {
     }
     addRage(dmg, result, weapon, spell) {
         if (!spell || spell instanceof HeroicStrike || spell instanceof HeroicStrikeExecute) {
-            if (result != RESULT.MISS && result != RESULT.DODGE && this.talents.umbridledwrath && rng10k() < this.talents.umbridledwrath * 100) {
+            if (result != RESULT.MISS && result != RESULT.DODGE && result != RESULT.PARRY && this.talents.umbridledwrath && rng10k() < this.talents.umbridledwrath * 100) {
                 this.rage += 1;
                 //if (log) this.log('Unbridled Wrath proc');
             }
         }
         if (spell) {
             if (spell instanceof Execute) spell.result = result;
-            if (result == RESULT.MISS || result == RESULT.DODGE)
+            if (result == RESULT.MISS || result == RESULT.DODGE || result == RESULT.PARRY)
                 this.rage += spell.refund ? spell.cost * 0.8 : 0;
         }
         else {
             if (result == RESULT.DODGE)
                 this.rage += (weapon.avgdmg() / 230.6) * 7.5 * 0.75;
-            else if (result != RESULT.MISS)
+            else if (result != RESULT.MISS && result != RESULT.PARRY)
                 this.rage += (dmg / 230.6) * 7.5;
         }
         if (this.rage > 100) this.rage = 100;
@@ -572,6 +579,8 @@ class Player {
         let roll = rng10k();
         tmp += Math.max(this.nextswinghs ? weapon.miss : weapon.dwmiss, 0) * 100;
         if (roll < tmp) return RESULT.MISS;
+        tmp += weapon.parry * 100;
+        if (roll < tmp) return RESULT.PARRY;
         tmp += weapon.dodge * 100;
         if (roll < tmp) return RESULT.DODGE;
         tmp += weapon.glanceChance * 100;
@@ -585,6 +594,8 @@ class Player {
         let roll = rng10k();
         tmp += Math.max(this.mh.miss, 0) * 100;
         if (roll < tmp) return RESULT.MISS;
+        tmp += Math.max(this.mh.parry, 0) * 100;
+        if (roll < tmp) return RESULT.PARRY;
         if (spell.canDodge) {
             tmp += this.mh.dodge * 100;
             if (roll < tmp) return RESULT.DODGE;
@@ -633,6 +644,9 @@ class Player {
         if (result == RESULT.DODGE) {
             this.dodgetimer = 5000;
         }
+        if (result == RESULT.PARRY) {
+            dmg *= 0;
+        }
         if (result == RESULT.GLANCE) {
             dmg *= this.getGlanceReduction(weapon);
         }
@@ -668,6 +682,9 @@ class Player {
         if (result == RESULT.DODGE) {
             this.dodgetimer = 5000;
         }
+        if (result == RESULT.PARRY) {
+            dmg *= 0;
+        }
         if (result == RESULT.GLANCE) {
             dmg *= this.getGlanceReduction(weapon);
         }
@@ -696,6 +713,9 @@ class Player {
         let result = this.rollspell(spell);
         procdmg = this.procattack(spell, this.mh, result);
 
+        if (result == RESULT.PARRY) {
+            dmg *= 0;
+        }
         if (result == RESULT.DODGE) {
             this.dodgetimer = 5000;
         }
@@ -712,7 +732,7 @@ class Player {
         return done + procdmg;
     }
     dealdamage(dmg, result, weapon, spell) {
-        if (result != RESULT.MISS && result != RESULT.DODGE) {
+        if (result != RESULT.MISS && result != RESULT.DODGE && result != RESULT.PARRY) {
             dmg *= this.stats.dmgmod;
             dmg *= (1 - this.armorReduction);
             this.addRage(dmg, result, weapon, spell);
