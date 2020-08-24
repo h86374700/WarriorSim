@@ -219,8 +219,12 @@ class Player {
                 if ((this.testTempEnchType == type && this.testTempEnch == item.id) ||
                     (this.testTempEnchType != type && item.selected)) {
 
-                    for (let prop in this.base)
-                        this.base[prop] += item[prop] || 0;
+                    for (let prop in this.base) {
+                        if (prop == 'haste')
+                            this.base.haste *= (1 + item.haste / 100) || 1;
+                        else
+                            this.base[prop] += item[prop] || 0;
+                    }
                 }
             }
         }
@@ -315,8 +319,8 @@ class Player {
     }
     update() {
         this.updateAuras();
+        this.updateArmorReduction();
         this.mh.glanceChance = this.getGlanceChance(this.mh);
-        this.armorReduction = this.getArmorReduction();
         this.mh.miss = this.getMissChance(this.mh);
         this.mh.dwmiss = this.mh.miss;
         this.mh.dodge = this.getDodgeChance(this.mh);
@@ -348,13 +352,11 @@ class Player {
 
         if (this.stats.apmod != 1)
             this.stats.ap += ~~((this.base.aprace + this.stats.str * 2) * (this.stats.apmod - 1));
-        if (this.stats.haste > 2) 
-            this.stats.haste = 2;
     }
     updateStrength() {
         this.stats.str = this.base.str;
         this.stats.ap = this.base.ap;
-            
+        
         for (let name in this.auras) {
             if (this.auras[name].timer) {
                 if (this.auras[name].stats.str)
@@ -394,7 +396,6 @@ class Player {
             this.stats.haste *= (1 + this.auras.pummeler.mult_stats.haste / 100);
         if (this.auras.spider && this.auras.spider.timer)
             this.stats.haste *= (1 + this.auras.spider.mult_stats.haste / 100);
-        if (this.stats.haste > 2) this.stats.haste = 2;
     }
     updateBonusDmg() {
         let bonus = 0;
@@ -410,6 +411,8 @@ class Player {
         this.target.armor = this.target.basearmor;
         if (this.auras.annihilator && this.auras.annihilator.timer)
             this.target.armor = Math.max(this.target.armor - (this.auras.annihilator.stacks * this.auras.annihilator.armor), 0);
+        if (this.auras.rivenspike && this.auras.rivenspike.timer)
+            this.target.armor = Math.max(this.target.armor - (this.auras.rivenspike.stacks * this.auras.rivenspike.armor), 0);
         if (this.auras.bonereaver && this.auras.bonereaver.timer)
             this.target.armor = Math.max(this.target.armor - (this.auras.bonereaver.stacks * this.auras.bonereaver.armor), 0);
         if (this.auras.swarmguard && this.auras.swarmguard.timer)
@@ -791,6 +794,7 @@ class Player {
         let mod = 1;
         let miss = 1700;
         let dmg = proc.magicdmg;
+        if (proc.gcd && this.timer && this.timer < 1500) return 0;
         if (proc.binaryspell) miss = this.target.binaryresist;
         else mod *= this.target.mitigation;
         if (rng10k() < miss) return 0;
