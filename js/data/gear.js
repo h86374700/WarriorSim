@@ -426,6 +426,16 @@ var gear = {
          "id": 19878
       },
       {
+         "name": "Chitinous Shoulderguards",
+         "str": 11,
+         "sta": 7,
+         "agi": 25,
+         "ac": 151,
+         "source": "AQ20",
+         "phase": 5,
+         "id": 21474
+      },
+      {
          "name": "Conqueror's Spaulders",
          "hit": 1,
          "str": 20,
@@ -2732,7 +2742,14 @@ var gear = {
          "source": "Naxx",
          "phase": "6",
          "id": 23041,
-      }
+      },
+      {
+         "name": "Mark of the Champion (vs Undead)",
+         "ap": 150,
+         "source": "Naxx",
+         "phase": "6",
+         "id": 23206
+      },
    ],
    "trinket2": [
       {
@@ -3142,6 +3159,18 @@ var gear = {
          "procspell": "Annihilator"
       },
       {
+         "name": "Rivenspike",
+         "mindmg": 77,
+         "maxdmg": 144,
+         "speed": 2.9,
+         "type": "Axe",
+         "source": "Dungeon",
+         "ppm": 1,
+         "phase": 1,
+         "id": 13286,
+         "procspell": "Rivenspike"
+      },
+      {
          "name": "Axe of the Deep Woods",
          "Mainhand": true,
          "mindmg": 78,
@@ -3152,7 +3181,8 @@ var gear = {
          "ppm": 0.8,
          "phase": 1,
          "id": 811,
-         "magicdmg": 108
+         "magicdmg": 108,
+         "procgcd": true,
       },
       {
          "name": "Blessed Qiraji War Axe",
@@ -3213,7 +3243,8 @@ var gear = {
          "ppm": 0.8,
          "phase": 1,
          "id": 17068,
-         "magicdmg": 138
+         "magicdmg": 138,
+         "procgcd": true,
       },
       {
          "name": "Doom's Edge",
@@ -3520,7 +3551,8 @@ var gear = {
          "phase": 1,
          "id": 17071,
          "magicdmg": 82,
-         "binaryspell": true
+         "binaryspell": true,
+         "procgcd": true
       },
       {
          "name": "Harbinger of Doom",
@@ -3803,7 +3835,8 @@ var gear = {
          "ppm": 0.4,
          "phase": 3,
          "id": 19170,
-         "magicdmg": 220
+         "magicdmg": 220,
+         "procgcd": true,
       },
       {
          "name": "Empyrean Demolisher",
@@ -4469,7 +4502,8 @@ var gear = {
          "ppm": 0.8,
          "phase": 1,
          "id": 17068,
-         "magicdmg": 138
+         "magicdmg": 138,
+         "procgcd": true,
       },
       {
          "name": "Doom's Edge",
@@ -4766,7 +4800,8 @@ var gear = {
          "phase": 1,
          "id": 17071,
          "magicdmg": 82,
-         "binaryspell": true
+         "binaryspell": true,
+         "procgcd": true
       },
       {
          "name": "Harbinger of Doom",
@@ -4929,7 +4964,8 @@ var gear = {
          "ppm": 1,
          "phase": 4,
          "id": 19910,
-         "magicdmg": 77
+         "magicdmg": 77,
+         "procgcd": true
       },
       {
          "name": "Claw of the Frost Wyrm",
@@ -5022,7 +5058,8 @@ var gear = {
          "ppm": 0.4,
          "phase": 3,
          "id": 19170,
-         "magicdmg": 220
+         "magicdmg": 220,
+         "procgcd": true,
       },
       {
          "name": "R14 Hammer",
@@ -5440,6 +5477,18 @@ var gear = {
          "id": 18683,
          "str": 7,
          "sta": 12,
+      },
+      {
+         "name": "Rivenspike",
+         "mindmg": 77,
+         "maxdmg": 144,
+         "speed": 2.9,
+         "type": "Axe",
+         "source": "Dungeon",
+         "ppm": 1,
+         "phase": 1,
+         "id": 13286,
+         "procspell": "Rivenspike"
       }
    ],
    "twohand": [
@@ -5793,6 +5842,7 @@ var gear = {
          "type": "Mace",
          "ppm": 0.7,
          "magicdmg": 333,
+         "procgcd": true
       },
       {
          "name": "Sulfuron Hammer",
@@ -5805,6 +5855,7 @@ var gear = {
          "type": "Mace",
          "ppm": 1,
          "magicdmg": 101,
+         "procgcd": true
       },
       {
          "name": "The Unstoppable Force",
@@ -6719,6 +6770,13 @@ var enchant = {
          "name": "Superior Impact",
          "bonusdmg": 9,
          "phase": 1
+      },
+      {
+         "id": 6043,
+         "name": "Iron Counterweight",
+         "haste": 3,
+         "phase": 1,
+         "temp": true,
       },
    ],
 };
