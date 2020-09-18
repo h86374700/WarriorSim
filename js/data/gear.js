@@ -370,6 +370,16 @@ var gear = {
          "source": "Dungeon",
          "phase": 1,
          "id": 12929
+      },
+      {
+         "name": "Pendant of the Qiraji Guardian",
+         "sta": 17,
+         "str": 12,
+         "agi": 11,
+         "defense": 6,
+         "phase": 5,
+         "source": "AQ40",
+         "id": 21700
       }
    ],
    "shoulder": [
@@ -814,6 +824,15 @@ var gear = {
          "source": "ZG",
          "phase": 4,
          "id": 22712
+      },
+      {
+         "name": "Shifting Cloak",
+         "sta": 8,
+         "agi": 17,
+         "dodge": 1,
+         "ac": 48,
+         "source": "Crafting",
+         "id": 18511
       }
    ],
    "chest": [
@@ -4600,7 +4619,7 @@ var gear = {
          "speed": 2.5,
          "type": "Axe",
          "source": "Other",
-         "phase": 5,
+         "phase": 4,
          "id": 20675
       },
       {
@@ -5804,7 +5823,7 @@ var gear = {
          "phase": 4,
          "type": "Mace",
          "physdmg": 210,
-         "ppm": 1,
+         "ppm": 4,
       },
       {
          "name": "Might of Menethil",

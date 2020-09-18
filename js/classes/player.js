@@ -1,5 +1,22 @@
 class Player {
-    constructor(testItem, testType, enchtype) {
+    static getConfig(base) {
+        return {
+            race: $('select[name="race"]').val(),
+            aqbooks: $('select[name="aqbooks"]').val() == "Yes",
+            weaponrng: $('select[name="weaponrng"]').val() == "Yes",
+            spelldamage: parseInt($('input[name="spelldamage"]').val()),
+            target: {
+                level: parseInt($('input[name="targetlevel"]').val()),
+                basearmor: parseInt($('input[name="targetarmor"]').val()),
+                armor: parseInt($('input[name="targetarmor"]').val()),
+                defense: parseInt($('input[name="targetlevel"]').val()) * 5,
+                mitigation: 1 - 15 * (parseInt($('input[name="targetresistance"]').val()) / 6000),
+                binaryresist: parseInt(10000 - (8300 * (1 - (parseInt($('input[name="targetresistance"]').val()) * 0.15 / 60)))),
+            },
+        };
+    }
+    constructor(testItem, testType, enchtype, config) {
+        if (!config) config = Player.getConfig();
         this.rage = 0;
         this.level = 60;
         this.timer = 0;
@@ -9,10 +26,10 @@ class Player {
         this.batchedextras = 0;
         this.nextswinghs = false;
         this.nextswingcl = false;
-        this.aqbooks = $('select[name="aqbooks"]').val() == "Yes";
-        this.weaponrng = $('select[name="weaponrng"]').val() == "Yes";
-        this.spelldamage = parseInt($('input[name="spelldamage"]').val());
-        this.dtps = parseInt($('input[name="dtps"]').val());
+        this.race = config.race;
+        this.aqbooks = config.aqbooks;
+        this.weaponrng = config.weaponrng;
+        this.spelldamage = config.spelldamage;
         if (enchtype == 1) {
             this.testEnch = testItem;
             this.testEnchType = testType;
@@ -25,14 +42,7 @@ class Player {
             this.testItem = testItem;
             this.testItemType = testType;
         }
-        this.target = {
-            level: parseInt($('input[name="targetlevel"]').val()),
-            basearmor: parseInt($('input[name="targetarmor"]').val()),
-            armor: parseInt($('input[name="targetarmor"]').val()),
-            defense: parseInt($('input[name="targetlevel"]').val()) * 5,
-            mitigation: 1 - 15 * (parseInt($('input[name="targetresistance"]').val()) / 6000),
-            binaryresist: parseInt(10000 - (8300 * (1 - (parseInt($('input[name="targetresistance"]').val()) * 0.15 / 60))))
-        };
+        this.target = config.target;
         this.base = {
             ap: 0,
             agi: 0,
@@ -83,7 +93,7 @@ class Player {
     }
     addRace() {
         for (let race of races) {
-            if (race.name == $('select[name="race"]').val()) {
+            if (race.name == this.race) {
                 this.base.aprace = race.ap;
                 this.base.ap += race.ap;
                 this.base.str += race.str;
@@ -99,7 +109,7 @@ class Player {
         this.talents = {};
         for (let tree in talents) {
             for (let talent of talents[tree].t) {
-                $.extend(this.talents, talent.aura(talent.c));
+                this.talents = Object.assign(this.talents, talent.aura(talent.c));
             }
         }
     }
@@ -282,6 +292,13 @@ class Player {
                 this.base.strmod *= (1 + buff.strmod / 100) || 1;
                 this.base.dmgmod *= (1 + buff.dmgmod / 100) || 1;
                 this.base.haste *= (1 + buff.haste / 100) || 1;
+
+                if (buff.group == "blessingmight" && this.aqbooks)
+                    this.base.ap += 36;
+                if (buff.group == "graceair" && this.aqbooks)
+                    this.base.agi += 10;
+                if (buff.group == "strengthearth" && this.aqbooks)
+                    this.base.str += 16;
             }
         }
     }
@@ -834,6 +851,14 @@ class Player {
         let crit = this.crit + this.mh.crit;
         if (roll < (crit * 100)) dmg *= 2;
         return dmg * this.stats.dmgmod * this.mh.modifier;
+    }
+    serializeStats() {
+        return {
+            auras: this.auras,
+            spells: this.spells,
+            mh: this.mh,
+            oh: this.oh,
+        };
     }
     log(msg) {
         console.log(`${step.toString().padStart(5,' ')} | ${this.rage.toFixed(2).padStart(6,' ')} | ${msg}`);
